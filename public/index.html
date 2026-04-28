@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌮gram - Вход</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-logo">🌮</div>
+        <h1>🌮gram</h1>
+        <p class="auth-subtitle">Вкусный мессенджер для общения</p>
+        
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="switchTab('login')">Вход</button>
+            <button class="auth-tab" onclick="switchTab('register')">Регистрация</button>
+        </div>
+
+        <!-- Форма входа -->
+        <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+            <div class="input-group">
+                <input type="text" id="loginUsername" placeholder="Имя пользователя" required minlength="3" maxlength="20">
+            </div>
+            <div class="input-group">
+                <input type="password" id="loginPassword" placeholder="Пароль" required>
+            </div>
+            <button type="submit" class="auth-btn">Войти</button>
+            <div id="loginError" class="error-message"></div>
+        </form>
+
+        <!-- Форма регистрации -->
+        <form id="registerForm" class="auth-form" style="display:none;" onsubmit="handleRegister(event)">
+            <div class="input-group">
+                <input type="text" id="registerUsername" placeholder="Придумайте имя пользователя" required minlength="3" maxlength="20">
+                <small>От 3 до 20 символов</small>
+            </div>
+            <div class="input-group">
+                <input type="password" id="registerPassword" placeholder="Придумайте пароль" required minlength="4">
+            </div>
+            <button type="submit" class="auth-btn">Зарегистрироваться</button>
+            <div id="registerError" class="error-message"></div>
+        </form>
+
+        <div class="auth-footer">
+            <p>Ваш уникальный ID будет присвоен автоматически</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Сохраняем функции для страницы входа
+        window.switchTab = function(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+        };
+
+        window.handleLogin = async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    localStorage.setItem('tacogram_user', JSON.stringify(data.user));
+                    window.location.href = '/chat.html';
+                } else {
+                    document.getElementById('loginError').textContent = data.error;
+                }
+            } catch (error) {
+                document.getElementById('loginError').textContent = 'Ошибка соединения с сервером';
+            }
+        };
+
+        window.handleRegister = async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`Регистрация успешна! Ваш уникальный ID: ${data.user.id}`);
+                    localStorage.setItem('tacogram_user', JSON.stringify(data.user));
+                    window.location.href = '/chat.html';
+                } else {
+                    document.getElementById('registerError').textContent = data.error;
+                }
+            } catch (error) {
+                document.getElementById('registerError').textContent = 'Ошибка соединения с сервером';
+            }
+        };
+
+        // Проверяем, авторизован ли пользователь
+        const savedUser = localStorage.getItem('tacogram_user');
+        if (savedUser) {
+            window.location.href = '/chat.html';
+        }
+    </script>
+</body>
+</html>
