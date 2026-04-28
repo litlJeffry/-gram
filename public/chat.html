@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌮gram - Чаты</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Левая панель -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <div class="user-avatar" id="currentUserAvatar">🌮</div>
+                    <div>
+                        <div class="user-name" id="currentUserName"></div>
+                        <div class="user-id" id="currentUserId"></div>
+                    </div>
+                </div>
+                <button class="icon-btn" onclick="logout()" title="Выйти">🚪</button>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" placeholder="🔍 Поиск пользователей..." id="searchUsers" oninput="filterUsers()">
+            </div>
+
+            <div class="users-list" id="usersList">
+                <div style="text-align:center; padding: 40px; color: #888;">
+                    Загрузка пользователей...
+                </div>
+            </div>
+        </div>
+
+        <!-- Область чата -->
+        <div class="chat-area" id="chatArea">
+            <div class="chat-placeholder" id="chatPlaceholder">
+                <div class="placeholder-logo">🌮</div>
+                <h2>🌮gram</h2>
+                <p>Выберите пользователя для начала общения</p>
+                <p class="placeholder-id">Ваш ID: <strong id="myIdDisplay"></strong></p>
+                <div class="placeholder-actions">
+                    <button onclick="shareId()">📋 Поделиться ID</button>
+                </div>
+            </div>
+
+            <div class="chat-active" id="chatActive" style="display:none;">
+                <div class="chat-header">
+                    <button class="back-btn" onclick="closeChat()">←</button>
+                    <div class="chat-user-avatar" id="chatAvatar">👤</div>
+                    <div class="chat-user-info">
+                        <div class="chat-user-name" id="chatName"></div>
+                        <div class="chat-user-status" id="chatStatus"></div>
+                    </div>
+                    <button class="icon-btn" onclick="deleteChat()">🗑</button>
+                </div>
+
+                <div class="messages-container" id="messagesContainer">
+                    <div class="messages-list" id="messagesList"></div>
+                    <div class="typing-indicator" id="typingIndicator" style="display:none;">
+                        печатает...
+                    </div>
+                </div>
+
+                <div class="message-input-area">
+                    <label class="attach-btn" for="imageInput" title="Отправить изображение">🖼</label>
+                    <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+                    <input type="text" class="message-input" id="messageInput" placeholder="Напишите сообщение..." onkeydown="handleKeyDown(event)">
+                    <button class="send-btn" onclick="sendMessage()">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
